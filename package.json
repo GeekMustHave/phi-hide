@@ -1,0 +1,35 @@
+{
+  "name": "phi-hide",
+  "version": "1.0.0",
+  "description": "Hide PHI inside of Postman run file",
+  "main": "phi-hide",
+  "scripts": {
+    "start": "node phi-hide.js -- "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeekMustHave/phi-hide.git"
+  },
+  "keywords": [
+    "phi",
+    "beneficiary"
+  ],
+  "author": "GeekMustHave",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GeekMustHave/phi-hide/issues"
+  },
+  "homepage": "https://github.com/GeekMustHave/phi-hide#readme",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "clear": "^0.1.0",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.0.0",
+    "minimist": "^1.2.0",
+    "readline-sync": "^1.4.9"
+  },
+  "pkg": {
+    "assets": "node_modules/figlet/fonts/Standard.flf"
+  },
+  "bin": "./phi-hide.js"
+}

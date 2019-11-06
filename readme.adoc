@@ -1,0 +1,226 @@
+= PHI Hide utility
+GeekMustHave <geek.musthave@phoenixworkgroup.com>
+v2.1e, 11/06/2019: Overview
+:Author: GeekMustHave
+:Company: GeekMustHave
+:title-page:
+:toc: left
+:toclevels: 4:
+:imagesdir: ./images
+:pagenums:
+:experimental:
+:source-hightlighter: coderay
+:icons: font
+:docdir: */documents
+:github: https://github.com/GeekMustHave/phi-hide
+:linkattrs:
+:seclinks:
+
+PHI Hide is a simple utility to help in post processing of the Postman `run` JSON file
+to replace PHI information from a list of replacements in a separate JSON file.
+
+To view or download the PDF version of this document please click on this link:./readme.pdf[link,window='_blank']
+
+== Security
+
+While this document and project is about Protected Health Information PHI great care has been take to make certain no PHI exist in the documents or code.
+
+== Structure
+
+=== Postman `Run` fileDoc
+
+The Postman test output `Run` file has beneficiary information that needs to be replace with non-identifying information.
+
+.Postman run example
+image::postman-run.png[Postman run example, align='center']
+
+=== phi-hide.json file
+
+This `phi-hide.json` file is used to drive the Postman run process to run (x) interactions based on the number of values in this file.
+
+.phi-hide file
+image::phi-list.png[phi-hide file, align='center']
+ 
+The definitions are
+
+. beneID - 10 digit file identifying a beneficiary (PHI)
+. abbrev - What will be displayed in the beneId's place
+
+This file need to hid the PHI beneficiary ID and provide a way to identify the test using the abbrev.
+
+NOTE: This PHI hide file contains PHI and should not be distributed.
+
+== Node app
+
+This app will be call `phi-hide` it is a simple replacement utility.
+
+There can be 3 optional arguments
+
+. `--inFile` - pathname to the Postman test output `Run` file
+. `--outFile`- pathname to the Revised test output `Run` file
+. `--phiFile`- pathname of the PHI replacement values
+
+NOTE: Argument names are double-hyped `--inFile`
+
+=== CLI Libraries
+
+Following are standard libraries I use for CLI utilities.  
+You can install them manually using NPM or install them with the project.
+The manual installation commands are shown below.
+
+   npm install --save chalk clear figlet inquirer
+
+The dependencies are
+
+.Dependencies
+[source,Powershell]
+----
+  "dependencies": {
+    "chalk": "^2.4.1", <1>
+    "clear": "^0.1.0", <2>
+    "figlet": "^1.2.0", <3>
+    "inquirer": "^6.0.0" <4>  
+  }
+----
+<1> Added color to text
+<2> Clears the terminal window
+<3> Draws big text ASCII characters
+<4> Ask questions saves responses (Future)
+
+=== Additional libraries
+
+I have used the following libraries in this project. 
+You can install this library manually using NPM or install it with the project.
+The manual installation commands are shown below. 
+
+  npm install --save minimist pause
+
+*minimist* - Used to process the arguments text after the `node phi-hide`
+*pause* - Provides a pause function with message
+
+
+
+== Code tricks
+
+=== Console.Log shortened
+
+The `console.log` statement can be shortened to just `log` with 
+
+.console.log shortened
+[source,JavaScript]
+----
+// -- Abbreviation for console.log
+const log = console.log;
+----
+
+
+
+=== Global replace
+
+The standard node `replace` function only replaces the first occurrence.
+
+To get `global` replace to work the `RegEx` regular expression function is used.  The `g` option is what sets the global
+
+.Global replace
+[source,JavaScript]
+----
+ inputText = inputText.replace(new RegExp(thisText, 'g'), thatText);
+----
+
+=== Passing parameters
+
+To quickly interpret the parameters string the `minimist` library was used.
+
+The code to extract an object with the parameters in it 
+
+.Parameters Code
+[source,JavaScript]
+----
+// --- Minimist is a parameter parsing function slice(2) is that arguments after 0=node, 1=program name
+//     argv function for all parameters
+const parms = require('minimist')(process.argv.slice(2));
+----
+
+The result for the code is an objected named `parms`.
+
+.minimist Result
+[source,JSON]
+----
+parms: {
+    "_": [],
+    "inFile": "postman-test-run.json",
+    "phiFile": "phi-list.json",
+    "outFile": "hhh.txt"
+}
+----
+
+The last step is to get the `values` for the three input parameters.
+
+The `fail` variable is used later in the code to display help message for `phi-hide`.
+
+.Get Parameter values
+[source,JavaScript]
+----
+// --- Handle arguments send as --inFile abc.json --outFile abc.lll --phiFile alpha.json
+if (!parms.hasOwnProperty('inFile')){fail=true}else{inFile=parms['inFile']};
+if (!parms.hasOwnProperty('outFile')){fail=true}else{outFile=parms['outFile']};
+if (!parms.hasOwnProperty('phiFile')){fail=true}else{phiFile=parms['phiFile']};
+
+----
+ 
+ 
+
+
+
+
+
+== Development files
+
+. *inFile:*  ./postman-test-run.json
+. *outFile:* ./postman-test-run.out.json
+. *phiFile:* ./phi-hide.json
+
+The `phiFile` JSON file needs to be in a special format.
+
+.phiFile format
+image::phifile-example.png[phiFile format, align='center']
+ 
+== Using PHI-HIDE
+
+.Running phi-hide
+image::phi-hide-run.png[Running phi-hide, align='center']
+
+ 
+== Compiling PHI-Hide
+
+In order to run PHI-Hide without `Node` the Node application can be compiled.
+
+The `pkg` Node command is used to perform the compilation.
+
+Installation of the `pkg` compiler
+
+.`pkg` installation
+[source,powershell]
+----
+npm install pkg -g  <1>
+----
+<1> The `-g` Indicates `pkg` to be installed globally
+
+The `PHI-Hide-win.exe` can be copied and or renamed, to any system with or without `Node` and it will run.
+
+== Document History
+
+.Document History
+[cols='2,2,2,6' options='header']
+|===
+| Date  | Version | Author | Description
+| 11/06/2019 | V2.1e | JHRS | Updated to prep for GITHub (Optim)
+| 12/06/2018 | v2.1d | JHRS | Updated with PKG complier information
+| 07/04/2018 | V2.1c | JHRS | much of the app finished
+| 06/29/2018 | V2,1b | JHRS |  Initial version
+|===
+ 
+
+ 
+
+
